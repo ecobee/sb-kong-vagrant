@@ -25,10 +25,10 @@ echo "Installing Kong version: $KONG_VERSION"
 echo "*************************************************************************"
 
 if [ "$CASSANDRA_VERSION" = "2" ]; then
-   CASSANDRA_VERSION=2.2.13
+   CASSANDRA_VERSION=2.2.19
    CASSANDRA_VERSION_REPO=22x
 else
-   CASSANDRA_VERSION=3.11.9
+   CASSANDRA_VERSION=3.11.11
    CASSANDRA_VERSION_REPO=311x
 fi
 
@@ -40,7 +40,7 @@ KONG_ADMIN_LISTEN="0.0.0.0:8001"
 KONG_ADMIN_LISTEN_SSL="0.0.0.0:8444"
 
 if [ $KONG_NUM_VERSION -gt 001003 ]; then
-  KONG_DOWNLOAD_URL="https://bintray.com/kong/kong-deb/download_file?file_path=kong-${KONG_VERSION}.trusty.all.deb"
+  KONG_DOWNLOAD_URL="https://download.konghq.com/gateway-0.x-ubuntu-trusty/pool/all/k/kong-community-edition/kong-community-edition_${KONG_VERSION}_all.deb"
 fi
 
 if [ $KONG_NUM_VERSION -ge 001300 ]; then
@@ -51,7 +51,7 @@ fi
 
 if [ $KONG_NUM_VERSION -ge 001500 ]; then
   # use Bionic now instead of Trusty
-  KONG_DOWNLOAD_URL="https://bintray.com/kong/kong-deb/download_file?file_path=kong-${KONG_VERSION}.bionic.all.deb"
+  KONG_DOWNLOAD_URL="https://download.konghq.com/gateway-0.x-ubuntu-bionic/pool/all/k/kong-community-edition/kong-community-edition_${KONG_VERSION}_all.deb"
 
   # Let's enable transparent listening option as well
   KONG_PROXY_LISTEN="0.0.0.0:8000 transparent, 0.0.0.0:8443 transparent ssl"
@@ -62,7 +62,7 @@ fi
 
 if [ $KONG_NUM_VERSION -ge 010300 ]; then
   # download name changed
-  KONG_DOWNLOAD_URL="https://bintray.com/kong/kong-deb/download_file?file_path=kong-${KONG_VERSION}.bionic.amd64.deb"
+  KONG_DOWNLOAD_URL="https://download.konghq.com/gateway-1.x-ubuntu-bionic/pool/all/k/kong/kong_${KONG_VERSION}_amd64.deb"
 fi
 
 if [ $KONG_NUM_VERSION -ge 020000 ]; then
@@ -71,8 +71,8 @@ if [ $KONG_NUM_VERSION -ge 020000 ]; then
   unset KONG_STREAM_LISTEN
   # update admin to defaults again, but on 0.0.0.0 instead of 127.0.0.1
   KONG_ADMIN_LISTEN="0.0.0.0:8001 reuseport backlog=16384, 0.0.0.0:8444 http2 ssl reuseport backlog=16384"
-  # use Focal now instead of Bionic
-  KONG_DOWNLOAD_URL="https://bintray.com/kong/kong-deb/download_file?file_path=kong-${KONG_VERSION}.xenial.amd64.deb"
+  # use Xenial now instead of Bionic
+  KONG_DOWNLOAD_URL="https://download.konghq.com/gateway-2.x-ubuntu-xenial/pool/all/k/kong/kong_${KONG_VERSION}_amd64.deb"
 fi
 
 sudo chown -R vagrant /usr/local
@@ -121,7 +121,8 @@ fi
 sudo -E apt-get install -qq httpie jq
 sudo -E apt-get install -qq git curl make pkg-config unzip apt-transport-https \
                             language-pack-en libssl-dev m4 cpanminus zlibc \
-                            zlib1g-dev libyaml-dev postgresql-common
+                            zlib1g-dev libyaml-dev postgresql-common build-essential
+
 
 echo "*************************************************************************"
 echo "Installing test tools for Test::Nginx"
@@ -216,9 +217,8 @@ if [ $KONG_NUM_VERSION -lt 1000 ]; then
   sudo -E apt-get install -qq dnsmasq
 fi
 
-sudo -E apt install -y ./kong.deb
+sudo -E apt-get install -y ./kong.deb
 rm kong.deb
-
 
 if [ -n "$KONG_UTILITIES" ]; then
   echo "*************************************************************************"
@@ -226,7 +226,7 @@ if [ -n "$KONG_UTILITIES" ]; then
   echo "*************************************************************************"
 
   # Install systemtap: https://openresty.org/en/build-systemtap.html
-  sudo -E apt-get install -qq build-essential zlib1g-dev elfutils libdw-dev gettext
+  sudo -E apt-get install -qq zlib1g-dev elfutils libdw-dev gettext
   wget -q http://sourceware.org/systemtap/ftp/releases/systemtap-4.0.tar.gz
   tar -xf systemtap-4.0.tar.gz
   pushd systemtap-4.0/
