@@ -104,7 +104,7 @@ echo "*************************************************************************"
 echo "Setting up APT repositories"
 echo "*************************************************************************"
 
-wget -q -O - '$@' https://www.apache.org/dist/cassandra/KEYS | sudo -E apt-key add -
+wget -q -O - '$@' https://downloads.apache.org/cassandra/KEYS | sudo -E apt-key add -
 sudo -E add-apt-repository "deb http://www.apache.org/dist/cassandra/debian $CASSANDRA_VERSION_REPO main"
 
 sudo -E apt-get update -qq
