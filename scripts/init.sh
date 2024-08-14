@@ -31,7 +31,7 @@ if [ ! -f /usr/local/bin/terraform ] ; then
   echo "*************************************"
 
   cd /tmp
-  wget --quiet https://releases.hashicorp.com/terraform/0.12.17/terraform_0.12.17_linux_amd64.zip
+  wget --quiet https://releases.hashicorp.com/terraform/0.14.0/terraform_0.14.0_linux_arm64.zip
   unzip -qq terraform*.zip
   mv ./terraform /usr/local/bin/
 fi
