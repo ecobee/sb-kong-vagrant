@@ -62,7 +62,7 @@ fi
 
 if [ $KONG_NUM_VERSION -ge 010300 ]; then
   # download name changed
-  KONG_DOWNLOAD_URL="https://download.konghq.com/gateway-1.x-ubuntu-bionic/pool/all/k/kong/kong_${KONG_VERSION}_amd64.deb"
+  KONG_DOWNLOAD_URL="https://packages.konghq.com/public/gateway-legacy/deb/ubuntu/pool/xenial/main/k/ko/kong_1.4.2/kong_1.4.2_arm64.deb"
 fi
 
 if [ $KONG_NUM_VERSION -ge 020000 ]; then
