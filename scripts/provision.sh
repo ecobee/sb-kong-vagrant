@@ -28,7 +28,7 @@ if [ "$CASSANDRA_VERSION" = "2" ]; then
    CASSANDRA_VERSION=2.2.19
    CASSANDRA_VERSION_REPO=22x
 else
-   CASSANDRA_VERSION=3.11.11
+   CASSANDRA_VERSION=3.11.17
    CASSANDRA_VERSION_REPO=311x
 fi
 
@@ -40,7 +40,7 @@ KONG_ADMIN_LISTEN="0.0.0.0:8001"
 KONG_ADMIN_LISTEN_SSL="0.0.0.0:8444"
 
 if [ $KONG_NUM_VERSION -gt 001003 ]; then
-  KONG_DOWNLOAD_URL="https://download.konghq.com/gateway-0.x-ubuntu-trusty/pool/all/k/kong-community-edition/kong-community-edition_${KONG_VERSION}_all.deb"
+  KONG_DOWNLOAD_URL="https://packages.konghq.com/public/gateway-legacy/deb/ubuntu/pool/xenial/main/k/ko/kong_1.4.2/kong_1.4.2_arm64.deb"
 fi
 
 if [ $KONG_NUM_VERSION -ge 001300 ]; then
@@ -62,7 +62,7 @@ fi
 
 if [ $KONG_NUM_VERSION -ge 010300 ]; then
   # download name changed
-  KONG_DOWNLOAD_URL="https://download.konghq.com/gateway-1.x-ubuntu-bionic/pool/all/k/kong/kong_${KONG_VERSION}_amd64.deb"
+  KONG_DOWNLOAD_URL="https://packages.konghq.com/public/gateway-legacy/deb/ubuntu/pool/xenial/main/k/ko/kong_1.4.2/kong_1.4.2_arm64.deb"
 fi
 
 if [ $KONG_NUM_VERSION -ge 020000 ]; then
@@ -72,7 +72,7 @@ if [ $KONG_NUM_VERSION -ge 020000 ]; then
   # update admin to defaults again, but on 0.0.0.0 instead of 127.0.0.1
   KONG_ADMIN_LISTEN="0.0.0.0:8001 reuseport backlog=16384, 0.0.0.0:8444 http2 ssl reuseport backlog=16384"
   # use Xenial now instead of Bionic
-  KONG_DOWNLOAD_URL="https://download.konghq.com/gateway-2.x-ubuntu-xenial/pool/all/k/kong/kong_${KONG_VERSION}_amd64.deb"
+  KONG_DOWNLOAD_URL="https://packages.konghq.com/public/gateway-legacy/deb/ubuntu/pool/xenial/main/k/ko/kong_2.2.1/kong_2.2.1_arm64.deb"
 fi
 
 sudo chown -R vagrant /usr/local
@@ -105,7 +105,7 @@ echo "Setting up APT repositories"
 echo "*************************************************************************"
 
 wget -q -O - '$@' https://downloads.apache.org/cassandra/KEYS | sudo -E apt-key add -
-sudo -E add-apt-repository "deb http://www.apache.org/dist/cassandra/debian $CASSANDRA_VERSION_REPO main"
+sudo -E add-apt-repository "deb https://apache.jfrog.io/artifactory/cassandra-deb/ $CASSANDRA_VERSION_REPO main"
 
 sudo -E apt-get update -qq
 sudo -E apt-get upgrade -qq
@@ -242,12 +242,6 @@ if [ -n "$KONG_UTILITIES" ]; then
   git clone https://github.com/openresty/stapxx.git
   git clone https://github.com/openresty/openresty-systemtap-toolkit.git
 
-  # Install flamegraph
-  git clone https://github.com/brendangregg/FlameGraph.git
-
-  # Install wrk and copy the binary to a location in PATH
-  git clone https://github.com/wg/wrk.git
-  cd wrk && make && sudo cp ./wrk /usr/local/bin/ && cd ..
   popd
 fi
 
@@ -256,9 +250,14 @@ echo "Installing Go compiler"
 echo "*************************************************************************"
 
 pushd /usr/local
-wget -q -O go.tar.gz https://golang.org/dl/go1.15.5.linux-amd64.tar.gz
+wget -q -O go.tar.gz https://golang.org/dl/go1.19.13.linux-arm64.tar.gz
 tar -xf go.tar.gz && rm go.tar.gz
 popd
+
+if ! grep -q '/usr/local/go/bin' ~/.profile; then
+   echo "export PATH=\$PATH:/usr/local/go/bin" >> ~/.profile
+fi
+source ~/.profile
 
 echo "*************************************************************************"
 echo "Update localization, paths, ulimit, etc."

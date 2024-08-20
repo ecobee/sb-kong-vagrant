@@ -41,7 +41,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   if ENV["KONG_VERSION"]
     version = ENV["KONG_VERSION"]
   else
-    version = "2.2.1"
+    version = "1.4.2"
   end
 
   if ENV["KONG_CASSANDRA"]
@@ -80,14 +80,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     loglevel = ""
   end
 
-  config.vm.provider :virtualbox do |vb|
+  config.vm.provider :vmware do |vb|
     vb.name = "vagrant_kong"
     vb.memory = memory
     vb.cpus = cpus
-    vb.customize ["guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/ — timesync-set-threshold", 10000]
   end
 
-  config.vm.box = "generic/ubuntu1604"
+  config.vm.box = "bento/ubuntu-20.04-arm64"
 
   if not source == ""
     config.vm.synced_folder source, "/kong"
